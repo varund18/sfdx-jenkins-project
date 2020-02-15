@@ -31,10 +31,10 @@ node{
         }
         stage('Check Only Deploy'){
             if(isUnix()){
-                rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy --checkonly --wait 10 --deploydir manifest/. -u ${HUB_ORG} --testlevel ${TEST_LEVEL}"
+                rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy --checkonly --wait 10 --deploydir mdapi_convert/. -u ${HUB_ORG} --testlevel ${TEST_LEVEL}"
             }
             else{
-                rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy --checkonly --wait 10 --deploydir manifest/. -u ${HUB_ORG} --testlevel ${TEST_LEVEL}"
+                rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy --checkonly --wait 10 --deploydir mdapi_convert/. -u ${HUB_ORG} --testlevel ${TEST_LEVEL}"
             }
             printf rmsg
             println('VSD withCredentials END')
