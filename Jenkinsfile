@@ -12,6 +12,7 @@ node{
     println SFDC_HOST
     println JWT_KEY_CRED_ID
     println CONNECTED_APP_CONSUMER_KEY
+    def toolbelt = tool 'toolbelt'
 
     stage('checkout source'){
         checkout scm
