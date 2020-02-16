@@ -1,45 +1,73 @@
 #!groovy
-import groovy.json.JsonSlurperClassic
-node{
-    def HUB_ORG=env.HUB_ORG_OH
-    def SFDC_HOST = env.SFDC_HOST_DH
-    def JWT_KEY_CRED_ID=env.JWT_CRED_ID_DH
-    def CONNECTED_APP_CONSUMER_KEY=env.CONNECTED_APP_CONSUMER_KEY
+
+node {
+
+    def SF_CONSUMER_KEY=env.SF_CONSUMER_KEY
+    def SF_USERNAME=env.SF_USERNAME
+    def SERVER_KEY_CREDENTIALS_ID=env.SERVER_KEY_CREDENTIALS_ID
+    def DEPLOYDIR='mdapi_convert'
     def TEST_LEVEL='RunLocalTests'
 
-    println 'Test Build 02-14-2020'
-    println HUB_ORG
-    println SFDC_HOST
-    println JWT_KEY_CRED_ID
-    println CONNECTED_APP_CONSUMER_KEY
+
     def toolbelt = tool 'toolbelt'
 
-    stage('checkout source'){
+
+    // -------------------------------------------------------------------------
+    // Check out code from source control.
+    // -------------------------------------------------------------------------
+
+    stage('checkout source') {
         checkout scm
     }
 
-    withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]){
-        stage('Authorize to Salesforce'){
-            println('VSD withCredentials START')
-            if(isUnix()){
-                rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
+
+    // -------------------------------------------------------------------------
+    // Run all the enclosed stages with access to the Salesforce
+    // JWT key credentials.
+    // -------------------------------------------------------------------------
+
+    withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server_key_file')]) {
+        // -------------------------------------------------------------------------
+        // Authenticate to Salesforce using the server key.
+        // -------------------------------------------------------------------------
+
+        stage('Authorize to Salesforce') {
+            rc = command "${toolbelt}/sfdx force:auth:jwt:grant --instanceurl https://login.salesforce.com --clientid ${SF_CONSUMER_KEY} --jwtkeyfile ${server_key_file} --username ${SF_USERNAME} --setalias UAT"
+            if (rc != 0) {
+                error 'Salesforce org authorization failed.'
             }
-            else{
-                rc = bat returnStatus: true, script: "\"${toolbelt}/sfdx\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
-            }
-            if(rc != 0){ error 'Salesforce org authorization failed.'}
-            println rc
         }
-        stage('Check Only Deploy'){
-            if(isUnix()){
-                rmsg = sh returnStdout: true, script: "${toolbelt}/sfdx force:mdapi:deploy --checkonly --wait 10 --deploydir mdapi_convert/. -u ${HUB_ORG} --testlevel ${TEST_LEVEL}"
+
+
+        // -------------------------------------------------------------------------
+        // Deploy metadata and execute unit tests.
+        // -------------------------------------------------------------------------
+
+        //stage('Deploy and Run Tests') {
+        //    rc = command "${toolbelt}/sfdx force:mdapi:deploy --wait 10 --deploydir ${DEPLOYDIR} --targetusername UAT --testlevel ${TEST_LEVEL}"
+        //    if (rc != 0) {
+        //        error 'Salesforce deploy and test run failed.'
+        //    }
+        //}
+
+
+        // -------------------------------------------------------------------------
+        // Example shows how to run a check-only deploy.
+        // -------------------------------------------------------------------------
+
+        stage('Check Only Deploy') {
+            rc = command "${toolbelt}/sfdx force:mdapi:deploy --checkonly --wait 10 --deploydir ${DEPLOYDIR} --targetusername UAT --testlevel ${TEST_LEVEL}"
+            if (rc != 0) {
+                error 'Salesforce deploy failed.'
             }
-            else{
-                rmsg = bat returnStdout: true, script: "\"${toolbelt}/sfdx\" force:mdapi:deploy --checkonly --wait 10 --deploydir mdapi_convert/. -u ${HUB_ORG} --testlevel ${TEST_LEVEL}"
-            }
-            printf rmsg
-            println('VSD withCredentials END')
-            println(rmsg)
         }
+    }
+}
+
+def command(script) {
+    if (isUnix()) {
+        return sh(returnStatus: true, script: script);
+    } else {
+		return bat(returnStatus: true, script: script);
     }
 }
