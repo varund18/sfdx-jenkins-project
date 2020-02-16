@@ -22,20 +22,20 @@ node{
         stage('Authorize to Salesforce'){
             println('VSD withCredentials START')
             if(isUnix()){
-                rc = sh returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
+                rc = sh returnStatus: true, script: "${toolbelt}/sfdx force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
             }
             else{
-                rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
+                rc = bat returnStatus: true, script: "\"${toolbelt}/sfdx\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
             }
             if(rc != 0){ error 'Salesforce org authorization failed.'}
             println rc
         }
         stage('Check Only Deploy'){
             if(isUnix()){
-                rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy --checkonly --wait 10 --deploydir mdapi_convert/. -u ${HUB_ORG} --testlevel ${TEST_LEVEL}"
+                rmsg = sh returnStdout: true, script: "${toolbelt}/sfdx force:mdapi:deploy --checkonly --wait 10 --deploydir mdapi_convert/. -u ${HUB_ORG} --testlevel ${TEST_LEVEL}"
             }
             else{
-                rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy --checkonly --wait 10 --deploydir mdapi_convert/. -u ${HUB_ORG} --testlevel ${TEST_LEVEL}"
+                rmsg = bat returnStdout: true, script: "\"${toolbelt}/sfdx\" force:mdapi:deploy --checkonly --wait 10 --deploydir mdapi_convert/. -u ${HUB_ORG} --testlevel ${TEST_LEVEL}"
             }
             printf rmsg
             println('VSD withCredentials END')
