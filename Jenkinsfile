@@ -54,7 +54,7 @@ node {
         // -------------------------------------------------------------------------
 
         stage('Check Only Deploy') {
-            rc = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy --checkonly --wait 10 --deploydir -d mdapi_convert/. -u ${SF_USERNAME}"
+            rc = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy --checkonly -d mdapi_convert/. -u ${SF_USERNAME}"
             if (rc != 0) {
                 error 'Salesforce deploy failed.'
             }
