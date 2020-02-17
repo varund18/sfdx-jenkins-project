@@ -9,9 +9,6 @@ node {
     def TEST_LEVEL='RunLocalTests'
 
 
-    def toolbelt = tool 'toolbelt'
-
-
     // -------------------------------------------------------------------------
     // Check out code from source control.
     // -------------------------------------------------------------------------
