@@ -60,6 +60,16 @@ node {
             }
         }
     }
+
+    post {
+
+        cleanup {
+            cleanWs()
+        }
+        always {
+                bat "sfdx force:auth:logout -u ${SF_USERNAME} -p" 
+            }
+        }
 }
 
 def command(script) {
