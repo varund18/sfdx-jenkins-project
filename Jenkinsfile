@@ -42,9 +42,9 @@ node {
             }
             stage('Convert to MDAPI format'){
                 if (isUnix()) {
-                    rmsg = sh returnStdout: true, script: "${toolbelt} force:source:convert -d mdapi_convert -u ${HUB_ORG}"
+                    rmsg = sh returnStdout: true, script: "${toolbelt} force:source:convert -d mdapi_convert"
                 }else{
-                    rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:convert -d mdapi_convert -u ${HUB_ORG}"
+                    rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:source:convert -d mdapi_convert"
                 }
             }
             stage('Salesforce Deploy Code') {
