@@ -24,24 +24,23 @@ node {
 
     withEnv(["HOME=${env.WORKSPACE}"]) {
         withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
-            stage('Deploye Code') {
+            stage('Salesforce Logout Org'){
                 if (isUnix()) {
                     rc = sh returnStatus: true, script: "${toolbelt} force:auth:logout --targetusername ${HUB_ORG} -p"
                 }else{
                     rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:logout --targetusername ${HUB_ORG} -p"
                 }
-                if (rc != 0) { error 'hub logout failed' }
-                
+                if (rc != 0) { error 'Salesforce ORG logout failed' }
+            }
+            stage('Salesforce Authorize Org'){
                 if (isUnix()) {
                     rc = sh returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
                 }else{
                     rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
                 }
-                if (rc != 0) { error 'hub org authorization failed' }
-
-                println rc
-
-                // need to pull out assigned username
+                if (rc != 0) { error 'Salesforce ORG authorization failed' }
+            }
+            stage('Salesforce Deploye Code') {
                 if (isUnix()) {
                     rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy --checkonly -d mdapi_convert/. -u ${HUB_ORG}"
                 }else{
@@ -49,7 +48,6 @@ node {
                 }
 
                 printf rmsg
-                println('Hello from a Job DSL script!')
                 println(rmsg)
             }
         }
