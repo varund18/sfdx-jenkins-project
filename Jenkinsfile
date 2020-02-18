@@ -40,11 +40,11 @@ node {
                 }
                 if (rc != 0) { error 'Salesforce ORG authorization failed' }
             }
-            stage('Salesforce Deploye Code') {
+            stage('Salesforce Deploy Code') {
                 if (isUnix()) {
-                    rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy --checkonly -d mdapi_convert/. -u ${HUB_ORG}"
+                    rmsg = sh returnStdout: true, script: "${toolbelt} force:mdapi:deploy -d mdapi_convert/. -u ${HUB_ORG}"
                 }else{
-                    rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy --checkonly -d mdapi_convert/. -u ${HUB_ORG}"
+                    rmsg = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy -d mdapi_convert/. -u ${HUB_ORG}"
                 }
 
                 printf rmsg
