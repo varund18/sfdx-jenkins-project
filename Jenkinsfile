@@ -40,7 +40,7 @@ node {
                 }
                 if (rc != 0) { error 'Salesforce ORG authorization failed' }
             }
-            stage('Convert to MDAPI format'){
+            stage('Salesforce Convert to MDAPI format'){
                 println 'VSD :: Convert to MDAPI START'
                 if (isUnix()) {
                     rmsg = sh returnStdout: true, script: "${toolbelt} force:source:convert -d mdapi_convert"
