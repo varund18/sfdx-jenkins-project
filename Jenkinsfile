@@ -23,43 +23,45 @@ node {
     // Run all the enclosed stages with access to the Salesforce
     // JWT key credentials.
     // -------------------------------------------------------------------------
+    withEnv(["HOME=${env.WORKSPACE}"]){
+        withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server_key_file')]) {
+            // -------------------------------------------------------------------------
+            // Authenticate to Salesforce using the server key.
+            // -------------------------------------------------------------------------
 
-    withCredentials([file(credentialsId: SERVER_KEY_CREDENTIALS_ID, variable: 'server_key_file')]) {
-        // -------------------------------------------------------------------------
-        // Authenticate to Salesforce using the server key.
-        // -------------------------------------------------------------------------
-
-        stage('Authorize to Salesforce') {
-            rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${SF_CONSUMER_KEY} --username ${SF_USERNAME} --jwtkeyfile \"${server_key_file}\" --setdefaultdevhubusername --instanceurl https://login.salesforce.com"
-            if (rc != 0) {
-                error 'Salesforce org authorization failed.'
+            stage('Authorize to Salesforce') {
+                rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${SF_CONSUMER_KEY} --username ${SF_USERNAME} --jwtkeyfile \"${server_key_file}\" --setdefaultdevhubusername --instanceurl https://login.salesforce.com"
+                if (rc != 0) {
+                    error 'Salesforce org authorization failed.'
+                }
             }
-        }
 
 
-        // -------------------------------------------------------------------------
-        // Deploy metadata and execute unit tests.
-        // -------------------------------------------------------------------------
+            // -------------------------------------------------------------------------
+            // Deploy metadata and execute unit tests.
+            // -------------------------------------------------------------------------
 
-        //stage('Deploy and Run Tests') {
-        //    rc = command "${toolbelt}/sfdx force:mdapi:deploy --wait 10 --deploydir ${DEPLOYDIR} --targetusername UAT --testlevel ${TEST_LEVEL}"
-        //    if (rc != 0) {
-        //        error 'Salesforce deploy and test run failed.'
-        //    }
-        //}
+            //stage('Deploy and Run Tests') {
+            //    rc = command "${toolbelt}/sfdx force:mdapi:deploy --wait 10 --deploydir ${DEPLOYDIR} --targetusername UAT --testlevel ${TEST_LEVEL}"
+            //    if (rc != 0) {
+            //        error 'Salesforce deploy and test run failed.'
+            //    }
+            //}
 
 
-        // -------------------------------------------------------------------------
-        // Example shows how to run a check-only deploy.
-        // -------------------------------------------------------------------------
+            // -------------------------------------------------------------------------
+            // Example shows how to run a check-only deploy.
+            // -------------------------------------------------------------------------
 
-        stage('Check Only Deploy') {
-            rc = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy --checkonly -d mdapi_convert --targetusername ${SF_USERNAME}"
-            if (rc != 0) {
-                error 'Salesforce deploy failed.'
+            stage('Check Only Deploy') {
+                rc = bat returnStdout: true, script: "\"${toolbelt}\" force:mdapi:deploy --checkonly -d mdapi_convert --targetusername ${SF_USERNAME}"
+                if (rc != 0) {
+                    error 'Salesforce deploy failed.'
+                }
             }
         }
     }
+    
 
     post {
 
