@@ -3,6 +3,7 @@
   <types>
     <name>ApexClass</name>
     <members>VSDLogApi</members>
+    <members>VSDNewClass</members>
   </types>
   <version>46.0</version>
 </Package>
