@@ -26,6 +26,13 @@ node {
         withCredentials([file(credentialsId: JWT_KEY_CRED_ID, variable: 'jwt_key_file')]) {
             stage('Deploye Code') {
                 if (isUnix()) {
+                    rc = sh returnStatus: true, script: "${toolbelt} force:auth:logout --targetusername ${HUB_ORG} -p"
+                }else{
+                    rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:logout --targetusername ${HUB_ORG} -p"
+                }
+                if (rc != 0) { error 'hub logout failed' }
+                
+                if (isUnix()) {
                     rc = sh returnStatus: true, script: "${toolbelt} force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile ${jwt_key_file} --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
                 }else{
                     rc = bat returnStatus: true, script: "\"${toolbelt}\" force:auth:jwt:grant --clientid ${CONNECTED_APP_CONSUMER_KEY} --username ${HUB_ORG} --jwtkeyfile \"${jwt_key_file}\" --setdefaultdevhubusername --instanceurl ${SFDC_HOST}"
