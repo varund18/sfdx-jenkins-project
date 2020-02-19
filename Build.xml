@@ -22,6 +22,8 @@
 	<target name="diffBuilderWithGitCommit">
 			<delete dir="deploy-sf"/>
 			<mkdir dir="deploy-sf"/>
+			<delete dir="mdapi_deploy"/>
+			<mkdir dir="mdapi_deploy"/>
 			<echo>Current GIT Commit : ${env.GIT_COMMIT}</echo>
 			<echo>Previous Known Successful GIT Commit : ${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}</echo>
 			<gitDiff/>
