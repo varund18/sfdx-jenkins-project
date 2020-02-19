@@ -14,15 +14,15 @@
 					<arg value="${env.GIT_COMMIT}" />
 					<arg value="${env.GIT_PREVIOUS_SUCCESSFUL_COMMIT}" />
 				</exec>
-				<echo>${git.diff}</echo>
+				<echo>VSD ${git.diff}</echo>
 			</sequential>
 	</macrodef>
 
 	<target name="diffBuilderWithGitCommit">
 			<delete dir="deploy-sf"/>
 			<mkdir dir="deploy-sf"/>
-			<echo>Current GIT Commit : env.GIT_COMMIT</echo>
-			<echo>Previous Known Successful GIT Commit : env.GIT_PREVIOUS_SUCCESSFUL_COMMIT</echo>
+			<echo>Current GIT Commit : %GIT_COMMIT%</echo>
+			<echo>Previous Known Successful GIT Commit : %GIT_PREVIOUS_SUCCESSFUL_COMMIT%</echo>
 			<gitDiff/>
 			<for list="${git.diff}" param="currentDiff" delimiter="${line.separator}">
 				<sequential>
