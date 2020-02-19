@@ -4,6 +4,6 @@ public with sharing class VSDTestClass01 {
     }
 
     public void myMethod(){
-        System.debug('Test 01');
+        System.debug('Test 02');
     }
 }
