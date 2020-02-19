@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <project name="stack_overflow">
+	<property environment="env"/>
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
 			<classpath>
 				<pathelement location="lib/ant-contrib-1.0b3.jar"/>
