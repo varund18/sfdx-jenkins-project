@@ -64,5 +64,6 @@
 					</if>
 				</sequential>
 			</for>
+			<move file="mdapi_convert" tofile="mdapi_convert_new"/>
 	</target>
 </project>
