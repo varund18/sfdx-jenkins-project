@@ -64,6 +64,7 @@
 					</if>
 				</sequential>
 			</for>
-			<move file="mdapi_convert" tofile="mdapi_convert_new"/>
+			<delete dir="force-app"/>
+			<move file="deploy-sf" tofile="force-app"/>
 	</target>
 </project>
