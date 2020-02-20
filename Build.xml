@@ -66,5 +66,6 @@
 			</for>
 			<delete dir="force-app"/>
 			<move file="deploy-sf" tofile="force-app"/>
+			<delete dir="deploy-sf"/>
 	</target>
 </project>
