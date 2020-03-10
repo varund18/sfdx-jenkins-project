@@ -4,6 +4,6 @@ public with sharing class VSDNewClass {
     }
 
     public void printLogs(){
-        System.debug('VSD :: Print Log02');
+        System.debug('VSD :: Print Log03');
     }
 }
